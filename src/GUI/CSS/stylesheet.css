@@ -1,0 +1,17 @@
+.pane {
+    -fx-background-color: #d3d3d3;
+}
+
+.hbox {
+    -fx-background-color: grey;
+}
+
+
+
+
+.button {
+    -fx-border-radius: 20px ;
+    -fx-background-radius: 20px;
+    -fx-border-color: transparent; /* Set border color to transparent */
+
+}
