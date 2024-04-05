@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -23,7 +24,9 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ImageViewerController implements Initializable {
@@ -84,25 +87,19 @@ public class ImageViewerController implements Initializable {
     }
 
     private void stopSlideshow() {
-        if (slideshowThread != null && slideshowThread.isAlive()) {
-            slideshowThread.interrupt();
+        if (slideshowTimeline != null) {
+            slideshowTimeline.stop();
         }
     }
 
     private void startSlideshow() {
-        stopSlideshow();
+        if (slideshowTimeline != null) {
+            slideshowTimeline.stop();
+        }
 
-        slideshowThread = new Thread(() -> {
-            try {
-                while (!Thread.currentThread().isInterrupted()) {
-                    Platform.runLater(() -> showNextImage());
-                    Thread.sleep(1500);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        });
-        slideshowThread.start();
+        slideshowTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event -> showNextImage()));
+        slideshowTimeline.setCycleCount(Timeline.INDEFINITE);
+        slideshowTimeline.play();
     }
 
     private void chooseImage() {
@@ -125,44 +122,64 @@ public class ImageViewerController implements Initializable {
     }
 
     private void countColors(Image image) {
-        new Thread(() -> {
-            final int height = (int) image.getHeight();
-            final int width = (int) image.getWidth();
-            PixelReader pixelReader = image.getPixelReader();
+        Task<Map<String, Integer>> countColorTasks = new Task<Map<String, Integer>>() {
+            @Override
+            protected Map<String, Integer> call() throws Exception {
+                final int width = (int) image.getWidth();
+                final int height = (int) image.getHeight();
+                PixelReader pixelReader = image.getPixelReader();
 
-            int redCount = 0, greenCount = 0, blueCount = 0, mixedCount = 0;
+                int redCount = 0, greenCount = 0, blueCount = 0, mixedCount = 0;
 
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    Color color = pixelReader.getColor(x, y);
-                    double red = color.getRed();
-                    double green = color.getGreen();
-                    double blue = color.getBlue();
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
 
-                    if (red > green && red > blue) {
-                        redCount++;
-                    } else if (green > red && green > blue) {
-                        greenCount++;
-                    } else if (blue > red && blue > green) {
-                        blueCount++;
-                    } else {
-                        mixedCount++;
+                        if (isCancelled()) {
+                            break;
+                        }
+
+                        Color color = pixelReader.getColor(x, y);
+                        double red = color.getRed();
+                        double green = color.getGreen();
+                        double blue = color.getBlue();
+
+                        if (red > green && red > blue) {
+                            redCount++;
+                        } else if (green > red && green > blue) {
+                            greenCount++;
+                        } else if (blue > red && blue > green) {
+                            blueCount++;
+                        } else {
+                            mixedCount++;
+                        }
                     }
-
-                    final int finalRedCount = redCount;
-                    final int finalGreenCount = greenCount;
-                    final int finalBlueCount = blueCount;
-                    final int finalMixedCount = mixedCount;
-
-                    Platform.runLater(() -> {
-                        redPixelsLabel.setText("Red Pixels: " + finalRedCount);
-                        greenPixelsLabel.setText("Green Pixels: " + finalGreenCount);
-                        bluePixelsLabel.setText("Blue Pixels: " + finalBlueCount);
-                        mixedPixelsLabel.setText("Mixed Pixels: " + finalMixedCount);
-                    });
                 }
+
+                Map<String, Integer> result = new HashMap<>();
+                result.put("Red", redCount);
+                result.put("Green", greenCount);
+                result.put("Blue", blueCount);
+                result.put("Mixed", mixedCount);
+
+                return result;
             }
-        }).start();
+        };
+
+        countColorTasks.setOnSucceeded(e -> {
+            Map<String, Integer> result = countColorTasks.getValue();
+            redPixelsLabel.setText("Red Pixels: " + result.get("Red"));
+            greenPixelsLabel.setText("Green Pixels: " + result.get("Green"));
+            bluePixelsLabel.setText("Blue Pixels: " + result.get("Blue"));
+            mixedPixelsLabel.setText("Mixed Pixels: " + result.get("Mixed"));
+        });
+
+        countColorTasks.setOnFailed(e -> {
+            Throwable problem = countColorTasks.getException();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Error: " + problem.getMessage());
+            alert.showAndWait();
+        });
+
+        new Thread(countColorTasks).start();
     }
 
     private void showNextImage() {
