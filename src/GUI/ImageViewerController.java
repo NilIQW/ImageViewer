@@ -3,9 +3,9 @@ package GUI;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -14,7 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -25,6 +27,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class ImageViewerController implements Initializable {
+    public Label redPixelsLabel;
+    public Label greenPixelsLabel;
+    public Label bluePixelsLabel;
+    public Label mixedPixelsLabel;
     @FXML
     private MFXButton loadImagesButton;
     @FXML
@@ -44,8 +50,7 @@ public class ImageViewerController implements Initializable {
     private Timeline slideshowTimeline;
     @FXML
     private Label nameLabel;
-
-
+    private Thread slideshowThread;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -79,19 +84,25 @@ public class ImageViewerController implements Initializable {
     }
 
     private void stopSlideshow() {
-        if (slideshowTimeline != null) {
-            slideshowTimeline.stop();
+        if (slideshowThread != null && slideshowThread.isAlive()) {
+            slideshowThread.interrupt();
         }
     }
 
     private void startSlideshow() {
-        if (slideshowTimeline != null) {
-            slideshowTimeline.stop();
-        }
+        stopSlideshow();
 
-        slideshowTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event -> showNextImage()));
-        slideshowTimeline.setCycleCount(Timeline.INDEFINITE);
-        slideshowTimeline.play();
+        slideshowThread = new Thread(() -> {
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    Platform.runLater(() -> showNextImage());
+                    Thread.sleep(1500);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        slideshowThread.start();
     }
 
     private void chooseImage() {
@@ -110,6 +121,48 @@ public class ImageViewerController implements Initializable {
 
         nameLabel.setText(file.getName());
 
+        countColors(image);
+    }
+
+    private void countColors(Image image) {
+        new Thread(() -> {
+            final int height = (int) image.getHeight();
+            final int width = (int) image.getWidth();
+            PixelReader pixelReader = image.getPixelReader();
+
+            int redCount = 0, greenCount = 0, blueCount = 0, mixedCount = 0;
+
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    Color color = pixelReader.getColor(x, y);
+                    double red = color.getRed();
+                    double green = color.getGreen();
+                    double blue = color.getBlue();
+
+                    if (red > green && red > blue) {
+                        redCount++;
+                    } else if (green > red && green > blue) {
+                        greenCount++;
+                    } else if (blue > red && blue > green) {
+                        blueCount++;
+                    } else {
+                        mixedCount++;
+                    }
+
+                    final int finalRedCount = redCount;
+                    final int finalGreenCount = greenCount;
+                    final int finalBlueCount = blueCount;
+                    final int finalMixedCount = mixedCount;
+
+                    Platform.runLater(() -> {
+                        redPixelsLabel.setText("Red Pixels: " + finalRedCount);
+                        greenPixelsLabel.setText("Green Pixels: " + finalGreenCount);
+                        bluePixelsLabel.setText("Blue Pixels: " + finalBlueCount);
+                        mixedPixelsLabel.setText("Mixed Pixels: " + finalMixedCount);
+                    });
+                }
+            }
+        }).start();
     }
 
     private void showNextImage() {
@@ -124,5 +177,4 @@ public class ImageViewerController implements Initializable {
             loadImage(imageFiles.get(currentIndex));
         }
     }
-
 }

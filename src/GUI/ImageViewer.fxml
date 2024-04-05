@@ -1,17 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" styleClass="pane" stylesheets="@CSS/stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ImageViewerController">
+   <top>
+      <VBox prefHeight="75.0" prefWidth="900.0" styleClass="vbox" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="37.0" prefWidth="900.0" styleClass="hbox">
+               <children>
+                  <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="70.0" text="File Name:">
+                     <font>
+                        <Font name="System Bold Italic" size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="30.0" top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" prefWidth="600.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <MFXButton fx:id="libraryButton" style="-fx-background-radius: 20;" text="Library">
+                     <HBox.margin>
+                        <Insets right="15.0" top="5.0" />
+                     </HBox.margin>
+                  </MFXButton>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="37.0" prefWidth="900.0">
+               <children>
+                  <Label fx:id="redPixelsLabel" text="Red pixels: 0" styleClass="color-label"/>
+                  <Label fx:id="greenPixelsLabel" text="Green pixels: 0" styleClass="color-label"/>
+                  <Label fx:id="bluePixelsLabel" text="Blue pixels: 0" styleClass="color-label"/>
+                  <Label fx:id="mixedPixelsLabel" text="Mixed pixels: 0" styleClass="color-label"/>
+               </children>
+               <padding>
+                  <Insets top="5.0" right="10.0" bottom="5.0" left="10.0"/>
+               </padding>
+               <spacing>20</spacing>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true">
+         <content>
+            <ImageView fx:id="imageView" preserveRatio="true" />
+         </content>
+      </ScrollPane>
+   </center>
    <bottom>
       <HBox alignment="BASELINE_LEFT" prefHeight="41.0" prefWidth="900.0" styleClass="hbox" BorderPane.alignment="CENTER">
          <children>
@@ -26,22 +77,6 @@
                      <HBox.margin>
                         <Insets left="15.0" right="15.0" top="8.0" />
                      </HBox.margin>
-                     <rippleColor>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8552631735801697" green="0.7285575270652771" blue="0.7285575270652771" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="1.0" green="1.0" blue="1.0" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </rippleColor>
                   </MFXButton>
                   <MFXButton fx:id="nextImageButton" styleClass="button" text="Next">
                      <HBox.margin>
@@ -67,38 +102,4 @@
          </children>
       </HBox>
    </bottom>
-   <center>
-      <ImageView fx:id="imageView" fitHeight="622.0" fitWidth="899.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-   </center>
-   <top>
-      <HBox prefHeight="37.0" prefWidth="900.0" styleClass="hbox" BorderPane.alignment="CENTER">
-         <children>
-            <HBox prefWidth="820.0">
-               <children>
-                  <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="70.0" text="File Name:">
-                     <font>
-                        <Font name="System Bold Italic" size="14.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets left="30.0" top="5.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" prefWidth="600.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets top="5.0" />
-                     </HBox.margin>
-                  </Label>
-               </children>
-            </HBox>
-            <MFXButton fx:id="libraryButton" style="-fx-background-radius: 20;" text="Library">
-               <HBox.margin>
-                  <Insets right="15.0" top="5.0" />
-               </HBox.margin>
-            </MFXButton>
-         </children>
-      </HBox>
-   </top>
 </BorderPane>
