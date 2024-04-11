@@ -12,6 +12,7 @@
 .button {
     -fx-border-radius: 20px ;
     -fx-background-radius: 20px;
-    -fx-border-color: transparent; /* Set border color to transparent */
+    -fx-border-color: rgba(68, 66, 66, 0.76); /* Set border color to transparent */
+    -fx-border-width: 2;
 
 }

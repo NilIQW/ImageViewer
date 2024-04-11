@@ -4,11 +4,14 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -16,6 +19,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -116,10 +120,23 @@ public class ImageViewerController implements Initializable {
         Image image = new Image(file.toURI().toString());
         imageView.setImage(image);
 
+        imageView.fitWidthProperty().unbind(); // Unbind fitWidth
+        imageView.fitHeightProperty().unbind(); // Unbind fitHeight
+
+        imageView.setPreserveRatio(true); // Preserve aspect ratio
+
+        // Set initial fitWidth and fitHeight
+        imageView.setFitWidth(1000); // Adjust as needed
+
+        // Bind fitWidth and fitHeight to scene width and height
+        imageView.fitWidthProperty().bind(imageView.sceneProperty().get().widthProperty());
+        imageView.fitHeightProperty().bind(imageView.sceneProperty().get().heightProperty());
+
         nameLabel.setText(file.getName());
 
         countColors(image);
     }
+
 
     private void countColors(Image image) {
         Task<Map<String, Integer>> countColorTasks = new Task<Map<String, Integer>>() {

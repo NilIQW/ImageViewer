@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -7,16 +8,13 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" styleClass="pane" stylesheets="@CSS/stylesheet.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ImageViewerController">
    <top>
       <VBox prefHeight="75.0" prefWidth="900.0" styleClass="vbox" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="37.0" prefWidth="900.0" styleClass="hbox">
+            <HBox prefHeight="40.0" prefWidth="1000.0" styleClass="hbox">
                <children>
                   <Label minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="70.0" text="File Name:">
                      <font>
@@ -26,7 +24,7 @@
                         <Insets left="30.0" top="5.0" />
                      </HBox.margin>
                   </Label>
-                  <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" prefWidth="600.0">
+                  <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" prefWidth="700.0">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -34,22 +32,25 @@
                         <Insets top="5.0" />
                      </HBox.margin>
                   </Label>
-                  <MFXButton fx:id="libraryButton" style="-fx-background-radius: 20;" text="Library">
+                  <HBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets right="15.0" top="5.0" />
                      </HBox.margin>
-                  </MFXButton>
+                     <children>
+                        <MFXButton fx:id="libraryButton" style="-fx-background-radius: 20;" text="Library" />
+                     </children>
+                  </HBox>
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="37.0" prefWidth="900.0">
                <children>
-                  <Label fx:id="redPixelsLabel" text="Red pixels: 0" styleClass="color-label"/>
-                  <Label fx:id="greenPixelsLabel" text="Green pixels: 0" styleClass="color-label"/>
-                  <Label fx:id="bluePixelsLabel" text="Blue pixels: 0" styleClass="color-label"/>
-                  <Label fx:id="mixedPixelsLabel" text="Mixed pixels: 0" styleClass="color-label"/>
+                  <Label fx:id="redPixelsLabel" styleClass="color-label" text="Red pixels: 0" />
+                  <Label fx:id="greenPixelsLabel" styleClass="color-label" text="Green pixels: 0" />
+                  <Label fx:id="bluePixelsLabel" styleClass="color-label" text="Blue pixels: 0" />
+                  <Label fx:id="mixedPixelsLabel" styleClass="color-label" text="Mixed pixels: 0" />
                </children>
                <padding>
-                  <Insets top="5.0" right="10.0" bottom="5.0" left="10.0"/>
+                  <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                </padding>
                <spacing>20</spacing>
             </HBox>
@@ -57,7 +58,7 @@
       </VBox>
    </top>
    <center>
-      <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true">
+      <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true">
          <content>
             <ImageView fx:id="imageView" preserveRatio="true" />
          </content>
@@ -66,28 +67,28 @@
    <bottom>
       <HBox alignment="BASELINE_LEFT" prefHeight="41.0" prefWidth="900.0" styleClass="hbox" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="BASELINE_LEFT" prefHeight="50.0" prefWidth="450.0">
+            <HBox alignment="BASELINE_LEFT" prefHeight="60.0" prefWidth="500.0">
                <children>
-                  <MFXButton fx:id="loadImagesButton" styleClass="button" text="Load Images..">
+                  <MFXButton fx:id="loadImagesButton" styleClass="button" text="Load Images.." HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets left="15.0" right="15.0" top="8.0" />
                      </HBox.margin>
                   </MFXButton>
-                  <MFXButton fx:id="previousImageButton" styleClass="button" text="Previous">
+                  <MFXButton fx:id="previousImageButton" styleClass="button" text="Previous" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets left="15.0" right="15.0" top="8.0" />
                      </HBox.margin>
                   </MFXButton>
-                  <MFXButton fx:id="nextImageButton" styleClass="button" text="Next">
+                  <MFXButton fx:id="nextImageButton" text="Next" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets left="15.0" right="15.0" top="8.0" />
                      </HBox.margin>
                   </MFXButton>
                </children>
             </HBox>
-            <HBox alignment="BASELINE_RIGHT" prefHeight="50.0" prefWidth="450.0">
+            <HBox alignment="BASELINE_RIGHT" prefHeight="60.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
                <children>
-                  <MFXButton fx:id="startSlideshowButton" styleClass="button" text="Start Slideshow">
+                  <MFXButton fx:id="startSlideshowButton" styleClass="button" text="Start Slideshow" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets left="15.0" right="15.0" top="8.0" />
                      </HBox.margin>
