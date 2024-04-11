@@ -21,15 +21,15 @@
                         <Font name="System Bold Italic" size="14.0" />
                      </font>
                      <HBox.margin>
-                        <Insets left="30.0" top="5.0" />
+                        <Insets left="30.0" top="10.0" />
                      </HBox.margin>
                   </Label>
                   <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" prefWidth="700.0">
                      <font>
-                        <Font size="14.0" />
+                        <Font name="System Bold Italic" size="14.0" />
                      </font>
                      <HBox.margin>
-                        <Insets top="5.0" />
+                        <Insets top="10.0" />
                      </HBox.margin>
                   </Label>
                   <HBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
@@ -58,7 +58,7 @@
       </VBox>
    </top>
    <center>
-      <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true">
+      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" pannable="true">
          <content>
             <ImageView fx:id="imageView" preserveRatio="true" />
          </content>

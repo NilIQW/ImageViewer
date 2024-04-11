@@ -3,23 +3,19 @@ package GUI;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -34,10 +30,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ImageViewerController implements Initializable {
-    public Label redPixelsLabel;
-    public Label greenPixelsLabel;
-    public Label bluePixelsLabel;
-    public Label mixedPixelsLabel;
+    @FXML
+    private Label redPixelsLabel;
+    @FXML
+    private Label greenPixelsLabel;
+    @FXML
+    private Label bluePixelsLabel;
+    @FXML
+    private Label mixedPixelsLabel;
     @FXML
     private MFXButton loadImagesButton;
     @FXML
@@ -52,12 +52,14 @@ public class ImageViewerController implements Initializable {
     private MFXButton stopSlideshowButton;
     @FXML
     private MFXButton libraryButton;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private Label nameLabel;
     private static List<File> imageFiles;
     private int currentIndex;
     private Timeline slideshowTimeline;
-    @FXML
-    private Label nameLabel;
-    private Thread slideshowThread;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -67,6 +69,8 @@ public class ImageViewerController implements Initializable {
         startSlideshowButton.setOnAction(event -> startSlideshow());
         stopSlideshowButton.setOnAction(event -> stopSlideshow());
         libraryButton.setOnAction(event -> showLibrary());
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide vertical scrollbar
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide horizontal scrollbar
     }
 
     private void showLibrary() {
