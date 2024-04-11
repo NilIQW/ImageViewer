@@ -18,6 +18,10 @@ public class Main extends Application {
 
         ImageViewerController imageViewerController = loader.getController();
 
+        primaryStage.setOnCloseRequest(windowEvent -> {
+            imageViewerController.shutdownExecutorService();
+        });
+
         Scene scene = new Scene(root);
         scene.getStylesheets().add("GUI/CSS/stylesheet.css");
         primaryStage.setScene(scene);

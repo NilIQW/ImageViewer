@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ImageViewerController implements Initializable {
     public Label redPixelsLabel;
@@ -54,6 +56,7 @@ public class ImageViewerController implements Initializable {
     @FXML
     private Label nameLabel;
     private Thread slideshowThread;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -122,7 +125,7 @@ public class ImageViewerController implements Initializable {
     }
 
     private void countColors(Image image) {
-        Task<Map<String, Integer>> countColorTasks = new Task<Map<String, Integer>>() {
+        Task<Map<String, Integer>> countColorTask = new Task<Map<String, Integer>>() {
             @Override
             protected Map<String, Integer> call() throws Exception {
                 final int width = (int) image.getWidth();
@@ -165,21 +168,27 @@ public class ImageViewerController implements Initializable {
             }
         };
 
-        countColorTasks.setOnSucceeded(e -> {
-            Map<String, Integer> result = countColorTasks.getValue();
+        countColorTask.setOnSucceeded(e -> {
+            Map<String, Integer> result = countColorTask.getValue();
             redPixelsLabel.setText("Red Pixels: " + result.get("Red"));
             greenPixelsLabel.setText("Green Pixels: " + result.get("Green"));
             bluePixelsLabel.setText("Blue Pixels: " + result.get("Blue"));
             mixedPixelsLabel.setText("Mixed Pixels: " + result.get("Mixed"));
         });
 
-        countColorTasks.setOnFailed(e -> {
-            Throwable problem = countColorTasks.getException();
+        countColorTask.setOnFailed(e -> {
+            Throwable problem = countColorTask.getException();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error: " + problem.getMessage());
             alert.showAndWait();
         });
 
-        new Thread(countColorTasks).start();
+        executorService.shutdown();
+        executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(countColorTask);
+    }
+
+    public void shutdownExecutorService() {
+        executorService.shutdown();
     }
 
     private void showNextImage() {
