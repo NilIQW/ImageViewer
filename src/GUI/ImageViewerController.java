@@ -3,6 +3,7 @@ package GUI;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -119,20 +120,23 @@ public class ImageViewerController implements Initializable {
     }
 
     private void loadImage(File file) {
-        Image image = new Image(file.toURI().toString());
-        imageView.setImage(image);
-        imageView.setPreserveRatio(true); // Preserve aspect ratio
+        try {
+            Image image = new Image(file.toURI().toString());
+            imageView.setImage(image);
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(1000);
 
-        // Bind fitWidth and fitHeight to scene width and height
-        imageView.fitWidthProperty().bind(imageView.sceneProperty().get().widthProperty());
-        imageView.fitHeightProperty().bind(imageView.sceneProperty().get().heightProperty());
+            countColors(image);
 
-        nameLabel.setText(file.getName());
-
-        countColors(image);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Image Loading Failed");
+            alert.setContentText("An error occurred while loading the image: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
-
-
     private void countColors(Image image) {
         Task<Map<String, Integer>> countColorTasks = new Task<Map<String, Integer>>() {
             @Override
@@ -179,10 +183,7 @@ public class ImageViewerController implements Initializable {
 
         countColorTasks.setOnSucceeded(e -> {
             Map<String, Integer> result = countColorTasks.getValue();
-            redPixelsLabel.setText("Red Pixels: " + result.get("Red"));
-            greenPixelsLabel.setText("Green Pixels: " + result.get("Green"));
-            bluePixelsLabel.setText("Blue Pixels: " + result.get("Blue"));
-            mixedPixelsLabel.setText("Mixed Pixels: " + result.get("Mixed"));
+            updateUI(result);
         });
 
         countColorTasks.setOnFailed(e -> {
@@ -193,7 +194,15 @@ public class ImageViewerController implements Initializable {
 
         new Thread(countColorTasks).start();
     }
-    private void showNextImage() {
+    private void updateUI(Map<String, Integer> result) {
+        Platform.runLater(() -> {
+            redPixelsLabel.setText("Red Pixels: " + result.get("Red"));
+            greenPixelsLabel.setText("Green Pixels: " + result.get("Green"));
+            bluePixelsLabel.setText("Blue Pixels: " + result.get("Blue"));
+            mixedPixelsLabel.setText("Mixed Pixels: " + result.get("Mixed"));
+        });
+    }
+        private void showNextImage() {
         if (imageFiles != null && !imageFiles.isEmpty()) {
             currentIndex = (currentIndex + 1) % imageFiles.size();
             loadImage(imageFiles.get(currentIndex));
