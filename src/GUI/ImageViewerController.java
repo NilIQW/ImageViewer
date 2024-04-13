@@ -69,8 +69,8 @@ public class ImageViewerController implements Initializable {
         startSlideshowButton.setOnAction(event -> startSlideshow());
         stopSlideshowButton.setOnAction(event -> stopSlideshow());
         libraryButton.setOnAction(event -> showLibrary());
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide vertical scrollbar
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide horizontal scrollbar
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // Hide vertical scrollbar
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // Hide horizontal scrollbar
     }
 
     private void showLibrary() {
@@ -94,12 +94,6 @@ public class ImageViewerController implements Initializable {
         }
     }
 
-    private void stopSlideshow() {
-        if (slideshowTimeline != null) {
-            slideshowTimeline.stop();
-        }
-    }
-
     private void startSlideshow() {
         if (slideshowTimeline != null) {
             slideshowTimeline.stop();
@@ -109,7 +103,11 @@ public class ImageViewerController implements Initializable {
         slideshowTimeline.setCycleCount(Timeline.INDEFINITE);
         slideshowTimeline.play();
     }
-
+    private void stopSlideshow() {
+        if (slideshowTimeline != null) {
+            slideshowTimeline.stop();
+        }
+    }
     private void chooseImage() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif"));
@@ -123,14 +121,7 @@ public class ImageViewerController implements Initializable {
     private void loadImage(File file) {
         Image image = new Image(file.toURI().toString());
         imageView.setImage(image);
-
-        imageView.fitWidthProperty().unbind(); // Unbind fitWidth
-        imageView.fitHeightProperty().unbind(); // Unbind fitHeight
-
         imageView.setPreserveRatio(true); // Preserve aspect ratio
-
-        // Set initial fitWidth and fitHeight
-        imageView.setFitWidth(1000); // Adjust as needed
 
         // Bind fitWidth and fitHeight to scene width and height
         imageView.fitWidthProperty().bind(imageView.sceneProperty().get().widthProperty());
@@ -202,7 +193,6 @@ public class ImageViewerController implements Initializable {
 
         new Thread(countColorTasks).start();
     }
-
     private void showNextImage() {
         if (imageFiles != null && !imageFiles.isEmpty()) {
             currentIndex = (currentIndex + 1) % imageFiles.size();
