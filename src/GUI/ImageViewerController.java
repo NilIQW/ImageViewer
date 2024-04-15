@@ -71,7 +71,7 @@ public class ImageViewerController implements Initializable {
         stopSlideshowButton.setOnAction(event -> stopSlideshow());
         libraryButton.setOnAction(event -> showLibrary());
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // Hide vertical scrollbar
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // Hide horizontal scrollbar
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Hide horizontal scrollbar
     }
 
     private void showLibrary() {
@@ -124,7 +124,7 @@ public class ImageViewerController implements Initializable {
             Image image = new Image(file.toURI().toString());
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
-            imageView.setFitWidth(1000);
+            imageView.setFitWidth(imageView.getScene().getWidth());
 
             countColors(image);
 
